@@ -1,5 +1,5 @@
 {
-  "name": "schedule-pwa",
+  "name": "schedule-app",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,14 +9,19 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "date-fns": "^4.1.0",
+    "firebase": "^10.13.1",
+    "idb": "^8.0.0",
+    "next": "^14.2.12",
+    "next-pwa": "^5.6.0",
     "react": "^18",
-    "react-dom": "^18",
-    "next": "14.2.12"
+    "react-dom": "^18"
   },
   "devDependencies": {
+    "eslint": "^8",
+    "eslint-config-next": "14.2.8",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.12"
+    "workbox-webpack-plugin": "^7.1.0"
   }
 }
