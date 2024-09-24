@@ -29,6 +29,8 @@ export const addTask = async (task) => {
             task.id = Date.now();
         }
 
+        task.synced = navigator.onLine;
+
         return new Promise((resolve, reject) => {
             const request = store.put(task); 
 
