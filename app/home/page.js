@@ -1,9 +1,9 @@
 'use client';
-
+import styles from '../styles/home.module.css';
 import PrivateRoute from '@/components/PrivateRoute';
 import { useState, useEffect } from 'react';
 import { format, parseISO, setDate } from 'date-fns';
-import { addTaskToFirestore, getTasksFromFirestore } from '../../public/utils/firebase';
+import { addTaskToFirestore, removeTaskFromFirestore, AnalyticsInit, getTasksFromFirestore } from '../../public/utils/firebase';
 import { addTask, getTasks } from '../../public/utils/indexedDb';
 
 const requestNotificationPermission = () => {
@@ -41,6 +41,7 @@ export default function Home() {
         tasksFromDB.forEach(task => tasksMap.set(task.id, task));
         tasksFromFirestore.forEach(task => {
           const exists = tasksMap.has(task.id);
+          
           if(!exists){
             tasksMap.set(task.id, task);
           }
@@ -70,31 +71,6 @@ export default function Home() {
       console.error('Erro ao carregar e mesclar tarefas:', error);
     }
   };
-
-  useEffect(() => {
-    requestNotificationPermission();
-    loadTasks();
-
-    const handleOfflineStatus = () => {
-      if (!navigator.onLine) {
-        setIsOffline(true);
-        sendNotification('Você está offline', 'As tarefas adicionadas serão sincronizadas quando a conexão for restaurada.');
-      } else {
-        setIsOffline(false);
-        sendNotification('Você está online', 'A conexão foi restabelecida.');
-        loadTasks(); 
-      }
-    };
-
-    window.addEventListener('online', handleOfflineStatus);
-    window.addEventListener('offline', handleOfflineStatus);
-
-    return () => {
-      window.removeEventListener('online', handleOfflineStatus);
-      window.removeEventListener('offline', handleOfflineStatus);
-    };
-  }, []);
-
 
   const handleAddTask = async (e) => {
     e.preventDefault();
@@ -126,6 +102,70 @@ export default function Home() {
     setCompleted(false);
   };
 
+  const handleCompleteTask = async (taskId) => {
+    try {
+      // Encontrar a tarefa que está sendo atualizada
+      const updatedTasks = tasks.map((task) => {
+        if (task.id === taskId) {
+          task.completed = !task.completed; // Alternar o status de 'concluído'
+        }
+        return task;
+      });
+  
+      const taskToUpdate = updatedTasks.find(task => task.id === taskId);
+  
+      if (navigator.onLine) {
+        // Sincronizar com o Firestore se estiver online
+        const tasksFromFirestore = await getTasksFromFirestore();
+        const existsInFirestore = tasksFromFirestore.some(task => task.id === taskToUpdate.id);
+  
+        if (existsInFirestore) {
+          // Atualizar a tarefa no Firestore
+          await addTaskToFirestore(taskToUpdate);
+        }
+      }
+  
+      // Atualizar no IndexedDB independentemente do estado de conexão
+      await addTask(taskToUpdate);
+  
+      // Atualizar o estado das tarefas na interface
+      setTasks(updatedTasks);
+    } catch (error) {
+      console.error('Erro ao marcar tarefa como concluída:', error);
+    }
+  };
+
+  const handleRemoveTask = async (taskId) => {
+    try {
+      // Remover do IndexedDB
+      console.log('ID da tarefa a ser removida:', taskId);
+
+      const updatedTasks = tasks.filter(task => task.id !== taskId); // Filtrar as tarefas e remover a que tem o ID correspondente
+  
+      // Atualizar o estado de tarefas localmente
+      setTasks(updatedTasks);
+  
+      if (navigator.onLine) {
+        // Se estiver online, remover a tarefa também do Firestore
+        const tasksFromFirestore = await getTasksFromFirestore();
+        const existsInFirestore = tasksFromFirestore.some(task => task.id === taskId);
+  
+        if (existsInFirestore) {
+          // Adicionar a lógica para remover a tarefa do Firestore
+          await removeTaskFromFirestore(taskId);
+        }
+      }
+  
+      // Remover a tarefa do IndexedDB
+      await removeTask(taskId); // Função para remover a tarefa localmente
+  
+    } catch (error) {
+      console.error('Erro ao remover tarefa:', error);
+    }
+  };
+  
+  
+
   const groupByDate = (tasks) => {
     const grouped = tasks.reduce((groups, task) => {
       const taskDate = parseISO(task.date);
@@ -151,90 +191,119 @@ export default function Home() {
 
   const groupedTasks = groupByDate(tasks);
 
-  return (
-    <PrivateRoute>
-      <div className="container mx-auto min-h-screen p-6">
-        <h1 className="text-3xl mb-6">Minhas Tarefas Diárias</h1>
+  useEffect(() => {
+    requestNotificationPermission();
+    loadTasks();
 
-        {isOffline && (
-          <div className='bg-red-500 text-white p-4 rounded mb-6'>
-            Você está offline, As tarefas serão sincronizadas quando a conexão for restaurada!
-          </div>
-        )}
+    const handleOfflineStatus = () => {
+      if (!navigator.onLine) {
+        setIsOffline(true);
+        sendNotification('Você está offline', 'As tarefas adicionadas serão sincronizadas quando a conexão for restaurada.');
+      } else {
+        setIsOffline(false);
+        sendNotification('Você está online', 'A conexão foi restabelecida.');
+        loadTasks(); 
+      }
+    };
 
+    window.addEventListener('online', handleOfflineStatus);
+    window.addEventListener('offline', handleOfflineStatus);
+
+
+    const loadAnalytics = async () => {
+      await AnalyticsInit();
+    }
+
+    if(typeof window !== 'undefined'){
+      loadAnalytics();
+    }
+
+    return () => {
+      window.removeEventListener('online', handleOfflineStatus);
+      window.removeEventListener('offline', handleOfflineStatus);
+    };
+  }, []);
+
+return (
+  <PrivateRoute>  
+    <div className={styles.container}>
+      <h1 className={styles.title}>Tasks</h1>
+      <p className={styles.subtitle}>Control</p>
+      {isOffline && (
+        <div className='bg-red-500 text-white p-4 rounded mb-6'>
+          You are offline, Tasks will be synced when connection is restored!
+        </div>
+      )}
+      
+      <div className={styles.inputContainer}>
         <form onSubmit={handleAddTask} className="mb-6">
           <input
             type="text"
             placeholder="Título"
-            className="border p-2 mr-2"
+            className={styles.input}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
           />
           <input
             type="datetime-local"
-            className="border p-2 mr-2"
+            className={styles.input}
             value={dateTime}
             onChange={(e) => setDateTime(e.target.value)}
             required
           />
+          <br></br>
           <label className="mr-2">
             <input
               type="checkbox"
               checked={completed}
               onChange={(e) => setCompleted(e.target.checked)}
             />{' '}
-            Completo
+            Done
           </label>
-          <button className="bg-blue-500 text-white p-2 rounded" type="submit">
-            Adicionar Tarefa
-          </button>
-        </form>
-
-        <h2 className="text-2xl mb-4">Tarefas</h2>
+          <button type='submit' className={styles.addButton}>+</button>
+        </form>  
+      </div>
+      <h2 className="text-2xl mb-4">Tarefas</h2>
         {Object.keys(groupedTasks).filter(date => date !== 'passadas').map((date) => (
+        
           <div key={date} className="mb-6">
             <h3 className="text-xl font-bold">
               {date === today ? 'Hoje' : format(parseISO(date), 'dd/MM/yyyy')}
             </h3>
-            <ul>
-              {groupedTasks[date].map((task) => (
-                <li key={task.id} className={`border p-4 mb-2 flex justify-between items-center ${!task.synced ? 'border-red-500' : ''}`}>
-                  <span>
-                    {task.title} -{' '}
-                    {format(new Date(task.date), 'HH:mm')} - {' '}
-                    {task.completed ? (
-                      <span className="text-green-500">Concluída</span>
-                    ) : (
-                      <span className="text-red-500">Não Concluída</span>
-                    )}
-                  </span>
-                </li>
-              ))}
-            </ul>
+            {groupedTasks[date].map((task) => (
+              <div key={task.id} className={styles.taskItem}>
+                <div className={styles.taskDetails}>
+                  <p>{task.title} - {format(new Date(task.date), 'HH:mm')}</p>
+                </div>
+                <div className={styles.taskActions}>
+                  <button onClick={() => handleCompleteTask(task.id)} className={styles.completeButton}>
+                    {task.completed ? '✓' : 'I'}
+                  </button>
+                  <button onClick={() => handleRemoveTask(task.id)} className={styles.removeButton}>−</button>
+                </div>
+              </div>
+            ))}
           </div>
         ))}
-
+    
         <h2 className="text-2xl mb-4">Tarefas Passadas</h2>
-        <ul>
+        
           {groupedTasks['passadas']?.map((task) => (
-            <li
-              key={task.id}
-              className={`border p-4 mb-2 flex justify-between items-center ${!task.synced ? 'text-gray-400 bg-gray-100 border-red-500' : 'text-gray-400 bg-gray-100'}`}
-            >
-              <span>
-              {task.title} -{' '}
-              {format(new Date(task.date), 'HH:mm')} em {format(parseISO(task.date), 'dd/MM/yyyy')} - {' '}
-                {task.completed ? (
-                  <span className="text-green-500">Concluída</span>
-                ) : (
-                  <span className="text-red-500">Não Concluída</span>
-                )}
-              </span>
-            </li>
+            
+            <div key={task.id} className={styles.taskItem}>
+            <div className={styles.taskDetails}>
+              <p>{task.title} - {format(new Date(task.date), 'HH:mm')}</p>
+            </div>
+            <div className={styles.taskActions}>
+              <button onClick={() => handleCompleteTask(task.id)} className={styles.completeButton}>
+                {task.completed ? '✓' : 'I'}
+              </button>
+              <button onClick={() => handleRemoveTask(task.id)} className={styles.removeButton}>−</button>
+            </div>
+          </div>
           ))}
-        </ul>
-      </div>
-    </PrivateRoute>
-  );
+    </div>
+  </PrivateRoute>
+);
 }

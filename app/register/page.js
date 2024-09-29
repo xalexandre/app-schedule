@@ -1,5 +1,6 @@
 'use client';
 
+import styles from '../styles/register.module.css';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signUp } from '../../public/utils/firebase';
@@ -45,50 +46,53 @@ const Register = () => {
   };
 
   return (
-    <div className='min-h-screen p-6'>
-      <h1 className='text-3xl mb-6'>Registrar</h1>
-      <form onSubmit={handleRegister} className='space-y-4'>
-        <input
-          type='text'
-          placeholder='Nome'
-          className='border p-2 w-full'
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-        <input
-          type='email'
-          placeholder='Email'
-          className='border p-2 w-full'
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type='password'
-          placeholder='Senha'
-          className={`border p-2 w-full ${passwordMatch ? 'border-green-500' : 'border-red-500'}`}
-          value={password}
-          onChange={handlePasswordChange}
-          required
-        />
-        <input
-          type='password'
-          placeholder='Confirme a Senha'
-          className={`border p-2 w-full ${passwordMatch ? 'border-green-500' : 'border-red-500'}`}
-          value={confirmPassword}
-          onChange={handleConfirmPasswordChange}
-          required
-        />
-        <button
-          type='submit'
-          className={`bg-blue-500 text-white p-2 rounded ${passwordMatch ? '' : 'opacity-50 cursor-not-allowed'}`}
-          disabled={!passwordMatch}
-        >
-          Registrar
-        </button>
-      </form>
-      {error && <p className='text-red-500 mt-4'>{error}</p>}
+    <div className={styles.container}>
+      <div className={styles.signupBox}>
+        <div className={styles.logoContainer}>
+          <div className={styles.userIcon}></div>
+        </div>
+        <h1 className={styles.title}>Signup</h1>
+        <p className={styles.subtitle}>Register</p>
+
+        <form onSubmit={handleRegister}>
+          <input
+            type='text'
+            placeholder='Name'
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className={styles.input}
+            required
+          />
+          <input
+            type="email"
+            placeholder="E-mail"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className={styles.input}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={handlePasswordChange}
+            className={styles.input}
+            required
+          />
+          <input
+            type='password'
+            placeholder='Confirm Password'
+            value={confirmPassword}
+            onChange={handleConfirmPasswordChange}
+            className={styles.input}
+            required
+          />
+          <button type="submit" className={styles.signupButton}>Signup</button>
+        </form>
+        <p className={styles.loginText}>
+          Do you have an account? <a href="/" className={styles.signupButton}>Login</a>
+        </p>
+      </div>
     </div>
   );
 };

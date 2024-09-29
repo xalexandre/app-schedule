@@ -1,6 +1,7 @@
 // app/page.js
 'use client'
 
+import styles from './styles/login.module.css';
 import { useState } from 'react';
 import { signIn } from '../public/utils/firebase'; 
 import { useAuth } from '../contexts/AuthContext'; 
@@ -38,31 +39,37 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen p-6">
-      <h1 className="text-3xl mb-6">Login</h1>
-      {error && <p className="text-red-500">{error}</p>}
-      <form onSubmit={handleLogin} className="mb-6">
-        <input
-          type="email"
-          placeholder="E-mail"
-          className="border p-2 mr-2"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Senha"
-          className="border p-2 mr-2"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button className="bg-blue-500 text-white p-2 rounded" type="submit">
-          Entrar
-        </button>
-      </form>
-      <p>Não tem uma conta? <a href="/register" className="text-blue-500">Registre-se</a></p>
+    <div className={styles.container}>
+      <div className={styles.loginBox}>
+        <div className={styles.logoContainer}>
+          <div className={styles.lockIcon}></div>
+        </div>
+        <h1 className={styles.title}>Login</h1>
+        <p className={styles.subtitle}>Authentication</p>
+
+        <form onSubmit={handleLogin}>
+          <input
+            type="email"
+            placeholder="E-mail"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className={styles.input}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className={styles.input}
+            required
+          />
+          <button type="submit" className={styles.loginButton}>Login</button>
+        </form>
+        <p className={styles.signupText}>
+          Don't have an account? <a href='/register' className={styles.loginButton}>Signup</a>
+        </p>
+      </div>
     </div>
   );
 }

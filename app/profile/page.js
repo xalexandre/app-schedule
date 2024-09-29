@@ -1,5 +1,5 @@
 'use client';
-
+import styles from '../styles/profile.module.css';
 import { useAuth } from '@/contexts/AuthContext';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -28,16 +28,21 @@ const Profile = () => {
   }, [user, router]);
 
   return (
-    <PrivateRoute>
-      <div className="container mx-auto min-h-screen p-6"> 
-        <h1 className="text-3xl mb-6">Perfil do Usuário</h1>
-        <div className="bg-white p-4 rounded shadow-md">
-          <p><strong>Nome:</strong> {userData.name}</p>
-          <p><strong>Email:</strong> {userData.email}</p>
-          <p><strong>ID do Usuário:</strong> {userData.uid}</p>
+
+    <PrivateRoute>  
+      <div className={styles.container}>
+        <div className={styles.loginBox}>
+          <div className={styles.logoContainer}>
+            <div className={styles.lockIcon}></div>
+          </div>
+          <h1 className={styles.title}>Profile</h1>
+            <p><strong>Name:</strong> {userData.name}</p>
+            <p><strong>E-mail:</strong> {userData.email}</p>
+            <p><strong>User ID:</strong> {userData.uid}</p>
+          
         </div>
-      </div>
-    </PrivateRoute>
+      </div>  
+    </PrivateRoute>  
   );
 };
 

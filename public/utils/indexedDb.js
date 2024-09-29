@@ -71,3 +71,18 @@ export const getTasks = async () => {
         throw new Error(`Erro ao obter tarefas do IndexedDB: ${error}`);
     }
 };
+
+export const removeTask = async (taskId) => {
+    try {
+      // Lógica para remover a tarefa do IndexedDB usando o taskId
+      const db = await openIndexedDB(); // Abra a conexão com o banco IndexedDB
+      const tx = db.transaction('tasks', 'readwrite');
+      const store = tx.objectStore('tasks');
+      await store.delete(taskId);
+      await tx.done;
+      console.log(`Tarefa ${taskId} removida do IndexedDB com sucesso.`);
+    } catch (error) {
+      console.error('Erro ao remover tarefa do IndexedDB:', error);
+    }
+  };
+  

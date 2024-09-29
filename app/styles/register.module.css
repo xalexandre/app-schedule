@@ -1,0 +1,92 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    background-color: #f9f9f9;
+  }
+  
+  .signupBox {
+    text-align: center;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .logoContainer {
+    background-color: #437e97;
+    padding: 20px;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+  }
+  
+  .userIcon {
+    background-image: url('../images/register-icon.svg');
+    width: 100%;
+    height: 100%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  
+  .title {
+    font-size: 24px;
+    color: #437e97;
+    margin-top: 20px;
+    margin-bottom: 5px;
+    
+  }
+  
+  .subtitle {
+    font-size: 14px;
+    color: #A0A0A0;
+  }
+  
+  .form {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+  }
+  
+  .input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  .signupButton {
+    width: 100%;
+    padding: 10px;
+    background-color: #437e97;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .signupButton:hover {
+    background-color: #437e97;
+  }
+  
+  .loginText {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #A0A0A0;
+  }
+  
+  .loginLink {
+    color: #437e97;
+    cursor: pointer;
+  }
+  
+  .loginLink:hover {
+    text-decoration: underline;
+  }
+  

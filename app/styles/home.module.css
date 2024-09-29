@@ -1,0 +1,111 @@
+.container {
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .title {
+    font-size: 24px;
+    color: #437e97;
+  }
+  
+  .subtitle {
+    font-size: 14px;
+    color: #A0A0A0;
+    margin-bottom: 20px;
+  }
+  
+  .inputContainer {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    background-color: #ececec;
+    border-radius: 5%;
+  }
+  
+  .input {
+    margin: 5px;
+    padding: 5px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 165px;
+  }
+  
+  .addButton {
+    background-color: #437e97;
+    color: white;
+    padding: 10px;
+    font-size: 18px;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    cursor: pointer;
+  }
+  
+  .addButton:hover {
+    background-color: #437e97;
+  }
+  
+  .taskList {
+    margin-top: 20px;
+  }
+  
+  .taskItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f7f7f7;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .taskDate {
+    align-items: right;
+    text-align: right;
+    color: #A0A0A0;
+    float: right;
+  }
+  
+  .taskDetails {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .taskActions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .completeButton {
+    background-color: #437e97;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .completeButton:hover {
+    background-color: #437e97;
+  }
+  
+  .removeButton {
+    background-color: #E74C3C;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .removeButton:hover {
+    background-color: #C0392B;
+  }
+  

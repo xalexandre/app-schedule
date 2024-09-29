@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
-import { logout } from 'public/utils/firebase';
+import { logout } from 'public/utils/firebase'; 
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,11 +23,11 @@ const Navbar = () => {
   const closeMenu = () => setIsOpen(false);
 
   return (
-    <nav className="bg-blue-500 text-white p-4">
+    <nav className="bg-teal-900 text-white p-4">
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo ou Nome do App */}
         <div className="text-2xl font-bold">
-          <Link href="/home">My Tasks App</Link>
+          <Link href="/home">Schedule APP</Link>
         </div>
 
         {/* Menu Normal */}
